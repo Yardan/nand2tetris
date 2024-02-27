@@ -3,7 +3,7 @@
 // by Nisan and Schocken, MIT Press.
 // File name: projects/05/Memory.hdl
 /** 
- * The Memory chip implements the complete address space of the Hack data memory,
+ * The Memory ch]ip implements the complete address space of the Hack data memory,
  * including RAM, memory mapped screen, and memory mapped keyboard.
  * Outputs the value of the memory location specified by the address input.
  * If (load == 1), sets the memory location specified by the address input
@@ -19,5 +19,21 @@ CHIP Memory {
     OUT out[16];
 
     PARTS:
-    //// Replace this comment with your code.
+    // RAM16K(in=in, load=dmxA, address=address[0..13], out=outRAM);
+    // Screen(in=in, load=dmx2a, address=address[0..12], out=outScreen);
+    // Keyboard(out=outKBD);
+
+    // DMux(in=dmxB, sel=address[13], a=dmx2a, b=dmx2b);
+    // Mux16(a=outScreen, b=outKBD, sel=address[13], out=muxScreenKBD);
+
+    // DMux(in=load, sel=address[14], a=dmxA, b=dmxB);
+    // Mux16(a=outRAM, b=muxScreenKBD, sel=address[14], out=out);
+
+    DMux4Way(in=load, sel=address[13..14], a=ramA, b=ramB, c=screenIn, d=null);
+    Or(a=ramA, b=ramB, out=ramIn);
+    RAM16K(in=in, load=ramIn, address=address[0..13], out=outRAM);
+    Screen(in=in, load=screenIn, address=address[0..12], out=outScreen);
+    Keyboard(out=outKBD);
+    Mux4Way16(a=outRAM, b=outRAM, c=outScreen, d=outKBD, sel=address[13..14], out=out);
+
 }
